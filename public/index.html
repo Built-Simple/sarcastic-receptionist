@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Our Sarcastic Receptionist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #eee;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #f06292, #ba68c8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(240, 98, 146, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #999;
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+
+        .phone-input-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .phone-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: #fff;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .phone-input:focus {
+            outline: none;
+            border-color: #f06292;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 30px rgba(240, 98, 146, 0.3);
+        }
+
+        .phone-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .call-button {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f06292, #ba68c8);
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(240, 98, 146, 0.4);
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .call-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 15px 50px rgba(240, 98, 146, 0.6);
+        }
+
+        .call-button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .call-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .call-button svg {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+
+        .pulse-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, transparent, rgba(240, 98, 146, 0.4));
+            animation: pulse 2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .status {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            min-height: 30px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .status.show {
+            opacity: 1;
+        }
+
+        .status.connecting { color: #ffd700; }
+        .status.connected { color: #4caf50; }
+        .status.error { color: #f44336; }
+        .status.ended { color: #999; }
+
+        .quotes {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .quotes.show {
+            opacity: 1;
+        }
+
+        .quote {
+            font-style: italic;
+            color: #ccc;
+            font-size: 1.1rem;
+            animation: fadeInOut 5s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            20%, 80% { opacity: 1; }
+        }
+
+        .warning {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid rgba(255, 152, 0, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #ffb74d;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .call-button { 
+                width: 150px; 
+                height: 150px;
+                font-size: 1.1rem;
+            }
+            .call-button svg {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        .spinner {
+            display: none;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .calling .spinner { display: block; }
+        .calling .call-text { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sarcastic Receptionist</h1>
+        <p class="subtitle">World's Most Passive-Aggressive AI Assistant</p>
+        
+        <div class="phone-input-container">
+            <input 
+                type="tel" 
+                id="phoneNumber" 
+                class="phone-input" 
+                placeholder="Enter your phone number"
+                pattern="[0-9+\-\(\) ]+"
+            />
+        </div>
+
+        <button id="callButton" class="call-button">
+            <div class="pulse-ring"></div>
+            <svg class="call-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            <span class="call-text">Call Receptionist</span>
+            <div class="spinner"></div>
+        </button>
+
+        <div id="status" class="status"></div>
+
+        <div id="quotes" class="quotes">
+            <p class="quote">Preparing maximum sarcasm...</p>
+        </div>
+
+        <div class="warning">
+            ⚠️ Warning: This receptionist has a Yale degree and isn't afraid to mention it
+        </div>
+    </div>
+
+    <script>
+        const quotes = [
+            "Currently updating my LinkedIn profile for the 47th time today...",
+            "Oh great, another caller. Just what I needed...",
+            "Hold on, I need to finish this Instagram story about how hard I work...",
+            "My life coach says I should be more positive. I positively hate this job...",
+            "Did I mention I went to Yale? Because I went to Yale...",
+            "Please hold while I pretend to look for someone who cares...",
+            "I was just about to take my hourly kombucha break...",
+            "This job is really interfering with my podcast listening schedule...",
+            "I'm sure whatever you need is SUPER important...",
+            "Let me put down my green juice and help you..."
+        ];
+
+        const phoneInput = document.getElementById('phoneNumber');
+        const callButton = document.getElementById('callButton');
+        const statusDiv = document.getElementById('status');
+        const quotesDiv = document.getElementById('quotes');
+        const quoteElement = quotesDiv.querySelector('.quote');
+        
+        let callSid = null;
+        let quoteInterval = null;
+
+        function formatPhoneNumber(number) {
+            // Remove all non-digits
+            const cleaned = number.replace(/\D/g, '');
+            
+            // Add +1 if not present and number is 10 digits
+            if (cleaned.length === 10) {
+                return '+1' + cleaned;
+            } else if (cleaned.length === 11 && cleaned[0] === '1') {
+                return '+' + cleaned;
+            }
+            
+            // Assume it's already formatted correctly
+            return number;
+        }
+
+        function showStatus(message, type = '') {
+            statusDiv.textContent = message;
+            statusDiv.className = 'status show ' + type;
+        }
+
+        function showRandomQuote() {
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            quoteElement.textContent = randomQuote;
+            quoteElement.style.animation = 'none';
+            setTimeout(() => {
+                quoteElement.style.animation = 'fadeInOut 5s ease-in-out';
+            }, 10);
+        }
+
+        function startQuoteRotation() {
+            quotesDiv.classList.add('show');
+            showRandomQuote();
+            quoteInterval = setInterval(showRandomQuote, 5000);
+        }
+
+        function stopQuoteRotation() {
+            if (quoteInterval) {
+                clearInterval(quoteInterval);
+                quoteInterval = null;
+            }
+            quotesDiv.classList.remove('show');
+        }
+
+        callButton.addEventListener('click', async () => {
+            const phoneNumber = phoneInput.value.trim();
+            
+            if (!phoneNumber) {
+                showStatus('Please enter your phone number', 'error');
+                return;
+            }
+
+            // Basic validation
+            if (phoneNumber.replace(/\D/g, '').length < 10) {
+                showStatus('Please enter a valid phone number', 'error');
+                return;
+            }
+
+            callButton.disabled = true;
+            callButton.classList.add('calling');
+            showStatus('Connecting to our sarcastic receptionist...', 'connecting');
+            startQuoteRotation();
+
+            try {
+                const formattedNumber = formatPhoneNumber(phoneNumber);
+                
+                const response = await fetch('/web-call', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ phoneNumber: formattedNumber })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    callSid = data.callSid;
+                    showStatus('📞 Calling your phone now... Pick up to meet our receptionist!', 'connected');
+                    
+                    // Start polling for call status
+                    pollCallStatus();
+                } else {
+                    showStatus(data.error || 'Failed to initiate call', 'error');
+                    stopQuoteRotation();
+                    callButton.disabled = false;
+                    callButton.classList.remove('calling');
+                }
+            } catch (error) {
+                console.error('Call error:', error);
+                showStatus('Connection failed. Please try again.', 'error');
+                stopQuoteRotation();
+                callButton.disabled = false;
+                callButton.classList.remove('calling');
+            }
+        });
+
+        async function pollCallStatus() {
+            if (!callSid) return;
+
+            try {
+                const response = await fetch(`/call-status/${callSid}`);
+                const data = await response.json();
+
+                if (data.status === 'completed' || data.status === 'failed' || data.status === 'busy' || data.status === 'no-answer') {
+                    showStatus('Call ended. Hope you enjoyed the sarcasm!', 'ended');
+                    stopQuoteRotation();
+                    callButton.disabled = false;
+                    callButton.classList.remove('calling');
+                    callSid = null;
+                } else if (data.status === 'in-progress') {
+                    showStatus('Connected! Enjoy your conversation...', 'connected');
+                    // Continue polling
+                    setTimeout(pollCallStatus, 2000);
+                } else {
+                    // Still connecting or ringing
+                    setTimeout(pollCallStatus, 1000);
+                }
+            } catch (error) {
+                console.error('Status poll error:', error);
+                setTimeout(pollCallStatus, 2000);
+            }
+        }
+
+        // Enter key support
+        phoneInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !callButton.disabled) {
+                callButton.click();
+            }
+        });
+
+        // Auto-format phone number as user types
+        phoneInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value.length <= 3) {
+                    value = value;
+                } else if (value.length <= 6) {
+                    value = value.slice(0, 3) + '-' + value.slice(3);
+                } else if (value.length <= 10) {
+                    value = value.slice(0, 3) + '-' + value.slice(3, 6) + '-' + value.slice(6);
+                } else {
+                    value = '+' + value.slice(0, 1) + '-' + value.slice(1, 4) + '-' + value.slice(4, 7) + '-' + value.slice(7, 11);
+                }
+            }
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>

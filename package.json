@@ -1,0 +1,33 @@
+{
+  "name": "deadpool-receptionist",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node ultimate-sarcastic-server-fixed.js",
+    "start:production": "NODE_ENV=production node ultimate-sarcastic-server-fixed.js",
+    "dev": "nodemon ultimate-sarcastic-server-fixed.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "health-check": "curl http://localhost:3000/health",
+    "logs:funny": "grep wasHilarious interactions.jsonl | tail -20",
+    "logs:today": "grep $(date +%Y-%m-%d) interactions.jsonl",
+    "tunnel": "ngrok http 3000"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@deepgram/sdk": "^4.11.1",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "express-ws": "^5.0.2",
+    "openai": "^5.11.0",
+    "playht": "^0.21.0",
+    "twilio": "^5.8.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

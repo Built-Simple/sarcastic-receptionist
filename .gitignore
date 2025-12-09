@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.backup*
+.env.webhook
+
+# Credentials
+.email-credentials
+
+# Logs
+*.log
+interactions.jsonl
+funny-interactions.log
+
+# Cache
+knowledge-cache/
+
+# Backups
+*.backup
+*.backup-*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+/tmp/
+
+# Production data
+active-knowledge-base.json
